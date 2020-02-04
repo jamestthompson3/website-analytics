@@ -1,0 +1,12 @@
+{
+  "name": "website-analytics",
+  "version": "0.0.1",
+  "description": "analytic data for website visits",
+  "main": "index.js",
+  "author": "taylor.thompson",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "eslint": "^6.8.0"
+  }
+}
