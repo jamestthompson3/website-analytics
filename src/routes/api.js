@@ -1,6 +1,7 @@
 const { bodyParser } = require("../utils/requests");
+const Router = require("../utils/router");
 
-const routes = new Map();
+const router = new Router();
 
 async function rootPath(req, res) {
   const body = await bodyParser(req);
@@ -8,12 +9,8 @@ async function rootPath(req, res) {
   res.end("ok");
 }
 
-routes.set("/", rootPath);
+router.get("/", rootPath);
 
-const router = (req, res) => {
-  const routeFunction = routes.get(req.url);
-  routeFunction(req, res);
-};
 module.exports = {
   router
 };
