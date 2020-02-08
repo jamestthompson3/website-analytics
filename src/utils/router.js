@@ -1,4 +1,7 @@
-const { NOT_SUPPORTED } = require("../constants");
+const {
+  HTTP: { NOT_SUPPORTED },
+  SYMBOLS
+} = require("../constants");
 const { httpError } = require("./requests");
 
 /*
@@ -19,6 +22,7 @@ class Router {
     this.postRoutes = new Map();
     this.putRoutes = new Map();
     this.deleteRoutes = new Map();
+    this.$$typeof = SYMBOLS.ROUTER;
   }
   // @param {string}
   // @params {ReqHandler}
@@ -47,6 +51,13 @@ class Router {
     } else {
       handler(this.req, this.res);
     }
+  }
+  use(url, handler) {
+    return function(req, res) {
+      if (req.url === url) {
+        handler(req, res);
+      }
+    };
   }
   // @private
   _listen(req, res) {
