@@ -6,7 +6,14 @@
   "author": "taylor.thompson",
   "license": "MIT",
   "private": true,
-  "dependencies": {},
+  "scripts": {
+    "migrate": "node-pg-migrate"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "node-pg-migrate": "^4.2.2",
+    "pg": "^7.18.1"
+  },
   "devDependencies": {
     "eslint": "^6.8.0"
   }

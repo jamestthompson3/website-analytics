@@ -1,5 +1,6 @@
 "use strict";
 
+require("dotenv").config();
 const http = require("http");
 const { green } = require("./utils/logging");
 const { router: apiRouter } = require("./routes/api");
