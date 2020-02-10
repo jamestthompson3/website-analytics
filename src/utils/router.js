@@ -23,6 +23,7 @@ class Router {
     this.putRoutes = new Map();
     this.deleteRoutes = new Map();
     this.$$typeof = SYMBOLS.ROUTER;
+    this.middleware = new Map();
   }
   // @param {string}
   // @params {ReqHandler}
@@ -53,16 +54,31 @@ class Router {
     }
   }
   use(url, handler) {
-    return function(req, res) {
-      if (req.url === url) {
-        handler(req, res);
-      }
-    };
+    const pathMapping = this.middleware.get(url);
+    if (!pathMapping) {
+      const pathMiddleware = new Set();
+      pathMiddleware.add(handler);
+      this.middleware.set(url, pathMiddleware);
+    } else {
+      pathMapping.add(handler);
+    }
   }
   // @private
   _listen(req, res) {
     this.req = req;
     this.res = res;
+    const middleware = this.middleware.get(req.url);
+    if (middleware) {
+      middleware.forEach(async plugin => {
+        // this case, the middleware is another Router
+        if (plugin.$$typeof === SYMBOLS.ROUTER) {
+          await plugin._listen(req, res);
+        } else {
+          await plugin(req, res);
+        }
+      });
+    }
+    // TODO return if middleware router handles request
     switch (req.method) {
       case "GET": {
         this.handleIncomingRequest(this.getRoutes.get(req.url));

@@ -3,8 +3,8 @@
  */
 const { cyan } = require("./logging");
 
-async function bodyParser(req) {
-  new Promise(res => {
+async function bodyParser(req, res, next) {
+  await new Promise(resolve => {
     const body = [];
     req
       .on("data", chunk => {
@@ -14,18 +14,28 @@ async function bodyParser(req) {
         const data = body.join("");
         try {
           const args = JSON.parse(data);
-          res(args);
+          resolve(args);
         } catch (e) {
-          res({});
+          resolve({});
         }
       });
   });
+
+  next();
 }
 
 function httpError(res, status, message) {
+  let callerName;
+  if (arguments.callee.caller) {
+    callerName = arguments.callee.caller.name;
+  }
   res.statusCode = status;
   const timestamp = new Date();
-  console.log(cyan(`[${timestamp.toUTCString()}]`), "ERROR CODE: ", status);
+  console.log(
+    cyan(`[${timestamp.toUTCString()}]`),
+    `${callerName || "ERROR CODE: "}`,
+    status
+  );
   res.end(`${message}`);
 }
 
