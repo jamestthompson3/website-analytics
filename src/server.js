@@ -27,7 +27,7 @@ function mainRouter(req, res) {
       break;
     }
     default:
-      httpError(res, 404, HTTP.NOT_FOUND);
+      httpError(res, 404, http.STATUS_CODES[404]);
       break;
   }
 }

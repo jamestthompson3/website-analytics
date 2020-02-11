@@ -1,8 +1,6 @@
-const {
-  HTTP: { NOT_SUPPORTED },
-  SYMBOLS
-} = require("../constants");
+const { SYMBOLS } = require("../constants");
 const { httpError } = require("./requests");
+const { STATUS_CODES } = require("http");
 
 /*
  * @typedef ReqArgs {{
@@ -30,25 +28,19 @@ class Router {
   get(url, reqHandler) {
     this.getRoutes.set(url, reqHandler);
   }
-  // @param {string}
-  // @params {ReqHandler}
   post(url, reqHandler) {
     this.postRoutes.set(url, reqHandler);
   }
-  // @param {string}
-  // @params {ReqHandler}
   put(url, reqHandler) {
     this.putRoutes.set(url, reqHandler);
   }
-  // @param {string}
-  // @params {ReqHandler}
   delete(url, reqHandler) {
     this.deleteRoutes.set(url, reqHandler);
   }
   // @private
   handleIncomingRequest(handler) {
     if (!handler) {
-      httpError(this.res, 405, NOT_SUPPORTED);
+      httpError(this.res, 405, STATUS_CODES[405]);
     } else {
       handler(this.req, this.res);
     }
@@ -56,11 +48,11 @@ class Router {
   use(url, handler) {
     const pathMapping = this.middleware.get(url);
     if (!pathMapping) {
-      const pathMiddleware = new Set();
-      pathMiddleware.add(handler);
+      const pathMiddleware = [];
+      pathMiddleware.push(handler);
       this.middleware.set(url, pathMiddleware);
     } else {
-      pathMapping.add(handler);
+      pathMapping.push(handler);
     }
   }
   // @private
@@ -78,27 +70,29 @@ class Router {
         }
       });
     }
-    // TODO return if middleware router handles request
-    switch (req.method) {
-      case "GET": {
-        this.handleIncomingRequest(this.getRoutes.get(req.url));
-        break;
-      }
-      case "POST": {
-        this.handleIncomingRequest(this.postRoutes.get(req.url));
-        break;
-      }
-      case "PUT": {
-        this.handleIncomingRequest(this.putRoutes.get(req.url));
-        break;
-      }
-      case "DELETE": {
-        this.handleIncomingRequest(this.deleteRoutes.get(req.url));
-        break;
-      }
-      default: {
-        httpError(res, 405, NOT_SUPPORTED);
-        break;
+    // if one of our middleware have ended the request
+    if (!res.writableEnded) {
+      switch (req.method) {
+        case "GET": {
+          this.handleIncomingRequest(this.getRoutes.get(req.url));
+          break;
+        }
+        case "POST": {
+          this.handleIncomingRequest(this.postRoutes.get(req.url));
+          break;
+        }
+        case "PUT": {
+          this.handleIncomingRequest(this.putRoutes.get(req.url));
+          break;
+        }
+        case "DELETE": {
+          this.handleIncomingRequest(this.deleteRoutes.get(req.url));
+          break;
+        }
+        default: {
+          httpError(res, 405, STATUS_CODES[405]);
+          break;
+        }
       }
     }
   }

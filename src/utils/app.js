@@ -23,6 +23,7 @@ class App {
     // assign since `next()` will hijack 'this'
     const { middleware, logMiddleware, debug } = this;
     async function next() {
+      if (res.writableEnded) return; // don't call anything if someone has called res.end()
       if (index < middleware.length) {
         const nextMiddleware = index + 1;
         debug && logMiddleware(middleware[nextMiddleware]);
