@@ -10,7 +10,7 @@ async function bodyParser(req, res, next) {
       .on("data", chunk => {
         body.push(chunk);
       })
-      .on("end", async () => {
+      .on("end", () => {
         const data = body.join("");
         try {
           const args = JSON.parse(data);

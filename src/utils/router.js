@@ -38,11 +38,11 @@ class Router {
     this.deleteRoutes.set(url, reqHandler);
   }
   // @private
-  handleIncomingRequest(handler) {
+  async handleIncomingRequest(handler) {
     if (!handler) {
       httpError(this.res, 405, STATUS_CODES[405]);
     } else {
-      handler(this.req, this.res);
+      await handler(this.req, this.res);
     }
   }
   use(url, handler) {
@@ -56,7 +56,7 @@ class Router {
     }
   }
   // @private
-  _listen(req, res) {
+  async _listen(req, res) {
     this.req = req;
     this.res = res;
     const middleware = this.middleware.get(req.url);
