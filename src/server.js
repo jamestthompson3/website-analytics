@@ -5,7 +5,6 @@ const http = require("http");
 const { green } = require("./utils/logging");
 const { router: apiRouter } = require("./routes/api");
 const { httpError, bodyParser } = require("./utils/requests");
-const { HTTP } = require("./constants");
 const App = require("./utils/app");
 
 /***

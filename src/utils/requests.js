@@ -32,7 +32,7 @@ function httpError(res, status, message) {
   res.statusCode = status;
   const timestamp = new Date();
   console.log(
-    cyan(`[${timestamp.toUTCString()}]`),
+    cyan(`[${timestamp}]`),
     `${callerName || "ERROR CODE: "}`,
     status
   );
